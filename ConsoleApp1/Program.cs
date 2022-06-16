@@ -1,38 +1,38 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿//using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-using IHost host = Host.CreateDefaultBuilder(args)
+await Host.CreateDefaultBuilder(args)
     .ConfigureAppConfiguration((hostingContext, configuration) =>
     {
-    //    IHostEnvironment env = hostingContext.HostingEnvironment;
-    //    configuration
-    //        .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-    //        .AddJsonFile($"appsettings.{env.EnvironmentName}.json", true, true);
-    //    configuration.AddEnvironmentVariables(); //prefix: "CustomPrefix_")
+        //    IHostEnvironment env = hostingContext.HostingEnvironment;
+        //    configuration
+        //        .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+        //        .AddJsonFile($"appsettings.{env.EnvironmentName}.json", true, true);
+        //    configuration.AddEnvironmentVariables(); //prefix: "CustomPrefix_")
     })
     .ConfigureServices((_, services) =>
-        services.AddSingleton<IService1, Service1>())
-    .UseConsoleLifetime()
-    .Build();
+        services.AddSingleton<IService1, Service1>()
+                .AddHostedService<ConsoleHostedService>())
+    .RunConsoleAsync();
 
-using IServiceScope serviceScope = host.Services.CreateScope();
-IServiceProvider provider = serviceScope.ServiceProvider;
+//using IServiceScope serviceScope = host.Services.CreateScope();
+//IServiceProvider provider = serviceScope.ServiceProvider;
 
-IHostEnvironment env = provider.GetRequiredService<IHostEnvironment>();
-Console.WriteLine(env.EnvironmentName);
+//IHostEnvironment env = provider.GetRequiredService<IHostEnvironment>();
+//Console.WriteLine(env.EnvironmentName);
 
-var svc = provider.GetRequiredService<IService1>();
-svc.Test();
+//var svc = provider.GetRequiredService<IService1>();
+//svc.Test();
 
-IConfiguration _config = provider.GetRequiredService<IConfiguration>();
-IHostApplicationLifetime _appLifetime = provider.GetRequiredService<IHostApplicationLifetime>();
+//IConfiguration _config = provider.GetRequiredService<IConfiguration>();
+//IHostApplicationLifetime _appLifetime = provider.GetRequiredService<IHostApplicationLifetime>();
 
-Console.WriteLine(_config.GetValue<string>("PYTHONPATH"));
-Console.WriteLine(_config["PYTHONPATH"]); //from environment
-Console.WriteLine(_config["PYTHONPATH2"]); //from appsettings.json
-Console.WriteLine($"password={_config["password"]}"); //from secrets file
-Console.WriteLine($"cmd1={_config["cmd1"]}"); //from command line
+//Console.WriteLine(_config.GetValue<string>("PYTHONPATH"));
+//Console.WriteLine(_config["PYTHONPATH"]); //from environment
+//Console.WriteLine(_config["PYTHONPATH2"]); //from appsettings.json
+//Console.WriteLine($"password={_config["password"]}"); //from secrets file
+//Console.WriteLine($"cmd1={_config["cmd1"]}"); //from command line
 
 //foreach ((string key, string value) in
 //    configuration.Build().AsEnumerable().Where(t => t.Value is not null))
@@ -42,6 +42,7 @@ Console.WriteLine($"cmd1={_config["cmd1"]}"); //from command line
 
 //await Task.Delay(10000).ContinueWith(t => _appLifetime.StopApplication());
 
+Console.WriteLine($"ExitCode={Environment.ExitCode}");
 return Environment.ExitCode;
 
 //await host.RunAsync();
